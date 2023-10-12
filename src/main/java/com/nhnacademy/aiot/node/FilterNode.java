@@ -27,14 +27,8 @@ public class FilterNode extends Node implements Inputable, Outputable {
         targets = new HashMap<>();
     }
 
-    boolean messageCheck(Message message) {
+    private boolean checkMessage(Message message) {
         return predicate.test(message);
-    }
-
-    public void filter(Message message) throws InterruptedException {
-        if (messageCheck(message)) {
-            pipe.add(message);
-        }
     }
 
     @Override // 필터 노드가 해야할거, 필터에서 걸러지지 않았다면? 실행할 파트
@@ -42,7 +36,7 @@ public class FilterNode extends Node implements Inputable, Outputable {
         while (!Thread.interrupted()) {
             try {
                 Message message = pipe.get();
-                if (messageCheck(message)) {
+                if (checkMessage(message)) {
                     for (Target target : targets.values()) {
                         target.add(message);
                     }
@@ -58,7 +52,9 @@ public class FilterNode extends Node implements Inputable, Outputable {
      */
     @Override
     public void add(int inputPort, Message message) throws InterruptedException {
-        pipe.add(message);
+        if (checkMessage(message)) {
+            pipe.add(message);
+        }
     }
 
     /**
