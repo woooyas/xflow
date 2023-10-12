@@ -40,10 +40,12 @@ public class SocketInNode extends Node implements Inputable {
     public void run() {
         try {
             Message message = new Message(DEFAULT_LIFE_TIME);
+
             message.append("value", new String(getHTTPRequest()));
             targets.values() //
                     .stream() //
                     .forEach(target -> sendMessage(target, message));
+
         } catch (IOException ignore) {
             Thread.currentThread().interrupt();
         }
@@ -77,6 +79,7 @@ public class SocketInNode extends Node implements Inputable {
         if (!HTTPMessages.hasHeader(byteData, CONTENT_TYPE)) {
             return true;
         }
+
         return HTTPMessages.getBody(byteData).length() == Integer
                 .parseInt(HTTPMessages.getHeaderValue(byteData, CONTENT_LENGTH));
     }
