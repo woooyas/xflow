@@ -60,10 +60,14 @@ public class SelectionNode extends Node implements Inputable, Outputable {
      * @param message 보낼 메세지
      * @throws InterruptedException 인터럽트가 발생할 경우
      */
-    public void send(Message message) throws InterruptedException {
-        for (Target target : targets.values()) {
-            target.add(message);
-        }
+    public void send(Message message) {
+        targets.values().stream().forEach(target -> {
+            try {
+                target.add(message);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
     }
 
     @Override
