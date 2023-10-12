@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.nhnacademy.aiot.consumer.SelectionNodeConsumer;
+import com.nhnacademy.aiot.exception.InvalidIndexException;
 import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.pipe.Pipe;
 
@@ -41,12 +42,16 @@ public class SelectionNode extends Node implements Inputable, Outputable {
     }
 
     /**
-     * 특정 target으로 특정 메세지를 보냅니다.
+     * 특정 target으로 특정 메세지를 보냅니다. 
      * @param index 보내고 싶은 target과 연결된 outputPort의 번호
      * @param message 보낼 메세지
      * @throws InterruptedException 인터럽트가 발생할 경우
+     * @throws InvalidIndexException index에 연결되지 않은 port 번호를 입력할 경우
      */
     public void send(int index, Message message) throws InterruptedException {
+        if(!targets.containsKey(index)) {
+            throw new InvalidIndexException();
+        }
         targets.get(index).add(message);
     }
 
