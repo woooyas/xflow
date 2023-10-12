@@ -62,11 +62,4 @@ public class FilterNode extends Node implements Inputable, Outputable {
     public void connect(int outputPort, Target target) {
         targets.put(outputPort, target);
     }
-
-    public static void main(String[] args) throws InterruptedException {
-        FilterNode filterNode = new FilterNode("1234", message -> message.getInt("value") < 5);
-        Message message = new Message(100);
-        message.append("value", 4);
-        filterNode.messageCheck(message);
-    }
 }
