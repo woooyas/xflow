@@ -10,7 +10,7 @@ import com.nhnacademy.aiot.pipe.Pipe;
 public class FilterNode extends Node implements Inputable, Outputable {
     private final Predicate<Message> predicate;
     private final Pipe pipe;
-    Map<Integer, Target> targets;
+    private final Map<Integer, Target> targets;
 
     /**
      * 필터 노드를 생성.
@@ -53,12 +53,21 @@ public class FilterNode extends Node implements Inputable, Outputable {
         }
     }
 
-    @Override // 메세지를 던지는거
+    /**
+     * 메세지를 pipe에 추가하는 구문
+     */
+    @Override
     public void add(int inputPort, Message message) throws InterruptedException {
         pipe.add(message);
     }
 
-    @Override // 다음 노드와 연결.
+    /**
+     * 다음 노드와 연결.
+     * 
+     * @param outputPort 메세지를 받을 노드
+     * @param target     메세지를 받을 노드의 포트 번호.
+     */
+    @Override
     public void connect(int outputPort, Target target) {
         targets.put(outputPort, target);
     }
