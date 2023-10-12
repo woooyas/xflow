@@ -4,7 +4,7 @@ import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.node.SelectionNode;
 
 @FunctionalInterface
-public interface Consumer {
+public interface SelectionNodeConsumer {
     
     void consume(Message message, SelectionNode selectionNode);
 
