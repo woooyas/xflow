@@ -17,7 +17,7 @@ public class SelectionNode extends Node implements Inputable, Outputable {
     private final SelectionNodeConsumer consumer;
 
     /**
-     * @param name 스레드 이름
+     * @param name     스레드 이름
      * @param consumer 조건식이 담긴 Consumer 인스턴스
      */
     public SelectionNode(String name, SelectionNodeConsumer consumer) {
@@ -29,10 +29,12 @@ public class SelectionNode extends Node implements Inputable, Outputable {
 
     @Override
     public void run() {
-        try {
-            consumer.consume(pipe.get(), this);
-        } catch (InterruptedException ignore) {
-            Thread.currentThread().interrupt();
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                consumer.consume(pipe.get(), this);
+            } catch (InterruptedException ignore) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -42,14 +44,15 @@ public class SelectionNode extends Node implements Inputable, Outputable {
     }
 
     /**
-     * 특정 target으로 특정 메세지를 보냅니다. 
-     * @param index 보내고 싶은 target과 연결된 outputPort의 번호
+     * 특정 target으로 특정 메세지를 보냅니다.
+     * 
+     * @param index   보내고 싶은 target과 연결된 outputPort의 번호
      * @param message 보낼 메세지
-     * @throws InterruptedException 인터럽트가 발생할 경우
+     * @throws InterruptedException  인터럽트가 발생할 경우
      * @throws InvalidIndexException index에 연결되지 않은 port 번호를 입력할 경우
      */
     public void send(int index, Message message) throws InterruptedException {
-        if(!targets.containsKey(index)) {
+        if (!targets.containsKey(index)) {
             throw new InvalidIndexException();
         }
         targets.get(index).add(message);
@@ -57,6 +60,7 @@ public class SelectionNode extends Node implements Inputable, Outputable {
 
     /**
      * 연결된 모든 target에게 메세지를 보냅니다.
+     * 
      * @param message 보낼 메세지
      * @throws InterruptedException 인터럽트가 발생할 경우
      */
