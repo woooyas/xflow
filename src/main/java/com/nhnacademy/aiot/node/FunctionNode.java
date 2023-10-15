@@ -3,6 +3,7 @@ package com.nhnacademy.aiot.node;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
+import com.nhnacademy.aiot.exception.NoMessageException;
 import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.pipe.Pipe;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +70,8 @@ public class FunctionNode implements InputNode, OutputNode {
         try {
             putMessageInPipes(function.apply(inPipe.get()));
 
+        } catch (NoMessageException ignore) {
+            // ignore
         } catch (InterruptedException ignore) {
             thread.interrupt();
         }
