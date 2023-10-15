@@ -89,8 +89,6 @@ public class RequestNode implements InputNode, OutputNode {
         try {
             submitHandler(inPipe.get());
 
-        } catch (JSONException e) {
-            log.error(NO_SOCKET, e);
         } catch (InterruptedException ignore) {
             thread.interrupt();
         }
@@ -103,6 +101,8 @@ public class RequestNode implements InputNode, OutputNode {
                         ((Socket) message.get(SOCKET)).getInputStream())).readLine());
                 putMessageInPipes(message);
 
+            } catch (JSONException e) {
+                log.error(NO_SOCKET, e);
             } catch (IOException e) {
                 log.error(CONNECTION_FAIL, e);
             } catch (InterruptedException ignore) {
