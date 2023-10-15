@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.slf4j.Logger;
-
 import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.pipe.Pipe;
 
@@ -15,9 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 public class StdInNode implements InputNode {
     private Message message;
     private Scanner scanner = new Scanner(System.in);
-    private Logger log;
+    Thread thread;
     
-    private final int LIFETIME = 10000;
+    private static final int LIFETIME = 10_000;
     private final Map<Integer, Pipe> outPipes;
 
     public StdInNode() {
@@ -25,12 +23,12 @@ public class StdInNode implements InputNode {
     }
 
     /**
-     * scanner를 message로 바꿉니다.
-     * @param scanner 입력받은 문자열입니다.
+     * scammer를 message로 바꿉니다.
+     * @param scanner stream에 있는 data를 받아옵니다.
      */
     void scanToMessage(Scanner scanner) {
         message = new Message(LIFETIME);
-        message.append("value", scanner.nextLine());
+        message.put("value", scanner.nextLine());
     }
 
     /**
@@ -42,20 +40,20 @@ public class StdInNode implements InputNode {
             pipe.put(message);
         } catch (InterruptedException e) {
             log.trace("message 넣기 실패");
-            log.trace(e.toString());
+            thread.interrupt();
         }
     }
 
     @Override
     public void start() {
         log.trace("입력 시작");
-        run();
+        thread.start();
     }
 
     @Override
     public void stop() {
-        log.trace("시스템 종료");
-        System.exit(0);
+        log.trace("StdInNode 종료");
+        thread.interrupt();
     }
 
     @Override
@@ -70,6 +68,7 @@ public class StdInNode implements InputNode {
 
     @Override
     public void connectOut(int port, Pipe outPipe) {
+        log.trace("pipe 연결");
         outPipes.put(port, outPipe);
     }
     
