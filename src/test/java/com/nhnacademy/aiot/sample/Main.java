@@ -1,4 +1,4 @@
-package com.nhnacademy.aiot.test;
+package com.nhnacademy.aiot.sample;
 
 import com.nhnacademy.aiot.node.InputNode;
 import com.nhnacademy.aiot.node.OutputNode;
@@ -13,10 +13,10 @@ class Main {
         OutputNode outNode = new OutNode();
         OutputNode outNode2 = new OutNode();
 
-        inNode.connectIn(0, pipe);
-        inNode2.connectIn(1, pipe);
-        outNode.connectOut(0, pipe);
-        outNode2.connectOut(1, pipe);
+        inNode.connectOut(0, pipe);
+        inNode2.connectOut(0, pipe);
+        outNode.connectIn(0, pipe);
+        outNode2.connectIn(0, pipe);
 
         inNode.start();
         inNode2.start();
