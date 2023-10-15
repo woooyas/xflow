@@ -128,13 +128,13 @@ public class RequestNode implements InputNode, OutputNode {
     }
 
     @Override
-    public void connectOut(int port, Pipe inPipe) {
-        outPipes.put(port, inPipe);
+    public void connectIn(int port, Pipe inPipe) {
+        this.inPipe = inPipe;
     }
 
     @Override
-    public void connectIn(int port, Pipe outPipe) {
-        this.inPipe = outPipe;
+    public void connectOut(int port, Pipe outPipe) {
+        outPipes.put(port, outPipe);
     }
 
 }
