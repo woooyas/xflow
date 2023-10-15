@@ -1,7 +1,12 @@
 package com.nhnacademy.aiot.node;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.json.JSONException;
 
 import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.pipe.Pipe;
@@ -50,8 +55,19 @@ public class StdOutNode implements OutputNode{
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
+            /* Message message = getMessage();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
+            writer.write(message.getString("value"));
+            writer.newLine();
+            writer.flush(); */
             Message message = getMessage();
-            log.trace(message.getString("value"));
+            try {
+                OutputStreamWriter outputStream = new OutputStreamWriter(System.out);
+                outputStream.write(message.getString("value"));
+            } catch (JSONException e) {
+            } catch (IOException e) {
+            }
+
         }
     }
 
