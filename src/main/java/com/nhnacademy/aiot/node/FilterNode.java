@@ -99,16 +99,18 @@ public class FilterNode implements InputNode, OutputNode {
         while (running.get()) {
             try {
                 for (Pipe inPipe : inputPipes.values()) {
-                    lock.lock();
-                    try {
-                        Message message = inPipe.get();
-                        if (checkMessage(message)) {
-                            for (Pipe outPipe : outputPipe.values()) {
-                                outPipe.put(message);
+                    if (!inPipe.isEmpty()) {
+                        lock.lock();
+                        try {
+                            Message message = inPipe.get();
+                            if (checkMessage(message)) {
+                                for (Pipe outPipe : outputPipe.values()) {
+                                    outPipe.put(message);
+                                }
                             }
+                        } finally {
+                            lock.unlock();
                         }
-                    } finally {
-                        lock.unlock();
                     }
                 }
             } catch (InterruptedException e) {
