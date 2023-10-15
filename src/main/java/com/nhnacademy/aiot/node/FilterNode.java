@@ -89,10 +89,16 @@ public class FilterNode implements InputNode, OutputNode {
 
     /**
      * inPipe에 inputPipe에 들어간 값을 전부 넣고, checkMessage Method로 검사.
+     * <p>
      * checkMessage를 사용해서 반환된 값에 따라 동작.
+     * <p>
      * 만약 true가 반환된다면 pipe에 message를 넣고, false면 버린다.
+     * <p>
      * 조건 추가. Producer - Consumer 패턴.
+     * <p>
      * 처리를 위한 Lock, Condition 추가.
+     * <p>
+     * inPipe가 비어있지 않을 때 동작하는 조건 추가.
      */
     @Override
     public void run() {
