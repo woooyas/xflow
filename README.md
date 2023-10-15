@@ -1,4 +1,7 @@
 # 📔 노드 개발 가이드
+![data flow image](img/data-flow.png)
+<br>
+
 ## 📄 샘플 노드 보기
 - 샘플 노드 ([https://github.com/jeongyongs/xflow/tree/sample/src/test/java/com/nhnacademy/aiot/sample](https://github.com/jeongyongs/xflow/tree/sample/src/test/java/com/nhnacademy/aiot/sample))
 <br>
