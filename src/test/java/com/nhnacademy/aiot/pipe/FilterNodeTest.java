@@ -12,7 +12,7 @@ class FilterNodeTest {
 
     @Test
     public void testFilterNode() throws InterruptedException {
-        // 조건: Message의 문자열 길이가 5보다 작은 메시지만 전달하는 필터 노드를 생성
+        // 조건: Message의 문자열 길이가 5보다 큰 메시지만 전달하는 필터 노드를 생성
         Predicate<Message> condition = message -> message.toString().length() > 5;
         FilterNode filterNode = new FilterNode(condition);
 
