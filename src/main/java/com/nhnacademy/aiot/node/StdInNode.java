@@ -20,7 +20,7 @@ public class StdInNode implements InputNode {
 
     public StdInNode() {
         outPipes = new HashMap<>();
-        thread = new Thread();
+        thread = new Thread(this);
     }
 
     /**
