@@ -13,13 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 public class StdInNode implements InputNode {
     private Message message;
     private Scanner scanner = new Scanner(System.in);
-    Thread thread;
+    private Thread thread;
     
     private static final int LIFETIME = 10_000;
     private final Map<Integer, Pipe> outPipes;
 
     public StdInNode() {
         outPipes = new HashMap<>();
+        thread = new Thread();
     }
 
     /**
