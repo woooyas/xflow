@@ -1,6 +1,5 @@
 package com.nhnacademy.aiot.node;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -43,12 +42,13 @@ public class StdOutNode implements OutputNode{
 
     @Override
     public void start() {
+        log.trace("StdOutNode start");
         thread.start();
     }
 
     @Override
     public void stop() {
-        log.trace("StdOutNode 종료");
+        log.trace("StdOutNode stop");
         thread.interrupt();
     }
 
@@ -60,12 +60,18 @@ public class StdOutNode implements OutputNode{
             writer.write(message.getString("value"));
             writer.newLine();
             writer.flush(); */
+
             Message message = getMessage();
             try {
                 OutputStreamWriter outputStream = new OutputStreamWriter(System.out);
-                outputStream.write(message.getString("value"));
+                outputStream.write(message.getString("value"+"\n"));
+                outputStream.flush();
             } catch (JSONException e) {
+                log.trace("JSONException" + e);
+                thread.interrupt();
             } catch (IOException e) {
+                log.error("IOException" + e);
+                thread.interrupt();
             }
 
         }
@@ -73,7 +79,7 @@ public class StdOutNode implements OutputNode{
 
     @Override
     public void connectIn(int port, Pipe inPipe) {
-        log.trace("pipe 연결");
+        log.trace("pipe connectIn success");
         inPipes.put(port, inPipe);
     }
     
