@@ -37,7 +37,6 @@ public class RequestNode implements InputNode, OutputNode {
     private static final String NODE_STARTED = "요청 노드가 시작되었습니다.";
     private static final String NODE_CLOSED = "요청 노드가 중지되었습니다.";
 
-    private static final int MESSAGE_LIFE_TIME = 60_000;
     private static final int DEFAULT_HANDLER_COUNT = 10;
 
     private final Thread thread;
@@ -88,7 +87,7 @@ public class RequestNode implements InputNode, OutputNode {
 
     private void process() {
         try {
-            submitHandler((Socket) inPipe.get().get(SOCKET));
+            submitHandler(inPipe.get());
 
         } catch (JSONException e) {
             log.error(NO_SOCKET, e);
@@ -97,13 +96,11 @@ public class RequestNode implements InputNode, OutputNode {
         }
     }
 
-    private void submitHandler(Socket socket) {
+    private void submitHandler(Message message) {
         handlerPool.submit(() -> {
             try {
-                Message message = new Message(MESSAGE_LIFE_TIME);
-                message.put(REQUEST, new BufferedReader( //
-                        new InputStreamReader(socket.getInputStream())).readLine());
-                message.put(SOCKET, socket);
+                message.put(REQUEST, new BufferedReader(new InputStreamReader( //
+                        ((Socket) message.get(SOCKET)).getInputStream())).readLine());
                 putMessageInPipes(message);
 
             } catch (IOException e) {
