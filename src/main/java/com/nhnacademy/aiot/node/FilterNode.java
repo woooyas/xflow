@@ -1,6 +1,8 @@
 package com.nhnacademy.aiot.node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
@@ -20,9 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FilterNode implements InputNode, OutputNode {
 
-    private final Pipe pipe;
+    private final Map<Integer, Pipe> inputPipe;
+    private final Map<Integer, Pipe> outputPipe;
     private final Predicate<Message> predicate;
-    private final Map<Integer, Pipe> connectPipe;
+    // private final Map<Integer, Pipe> connectPipe;
 
     private Thread thread;
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -46,8 +49,8 @@ public class FilterNode implements InputNode, OutputNode {
      */
     public FilterNode(Predicate<Message> predicate) {
         this.predicate = predicate;
-        pipe = new Pipe();
-        connectPipe = new HashMap<>();
+        inputPipe = new HashMap();
+        outputPipe = new HashMap();
     }
 
     /**
@@ -80,6 +83,7 @@ public class FilterNode implements InputNode, OutputNode {
     }
 
     /**
+     * inPipe에 inputPipe에 들어간 값을 전부 넣고, checkMessage Method로 검사.
      * checkMessage를 사용해서 반환된 값에 따라 동작.
      * 만약 true가 반환된다면 pipe에 message를 넣고, false면 버린다.
      */
@@ -87,10 +91,12 @@ public class FilterNode implements InputNode, OutputNode {
     public void run() {
         while (running.get()) {
             try {
-                Message message = pipe.get();
-                if (checkMessage(message)) {
-                    for (Pipe pipe : connectPipe.values()) {
-                        pipe.put(message);
+                for (Pipe inPipe : inputPipe.values()) {
+                    Message message = inPipe.get();
+                    if (checkMessage(message)) {
+                        for (Pipe outPipe : outputPipe.values()) {
+                            outPipe.put(message);
+                        }
                     }
                 }
             } catch (InterruptedException e) {
@@ -102,13 +108,15 @@ public class FilterNode implements InputNode, OutputNode {
 
     @Override
     public void connectIn(int port, Pipe inPipe) {
-        connectPipe.put(port, inPipe);
+        // 노드가 사용할 메세지를 꺼내오는 파이프
+        inputPipe.put(port, inPipe);
         log.trace("ConnectIn is successful", port);
     }
 
     @Override
     public void connectOut(int port, Pipe outPipe) {
-        connectPipe.put(port, outPipe);
+        // 노드가 처리한 메세지를 담는 파이프.
+        outputPipe.put(port, outPipe);
         log.trace("ConnectOut is successful", port);
     }
 
