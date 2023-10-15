@@ -13,6 +13,6 @@ public interface OutputNode extends Node {
      * @param port 파이프를 연결할 노드의 출력 포트 번호입니다.
      * @param inPipe 연결할 파이프입니다.
      */
-    public void connectOut(int port, Pipe inPipe);
+    public void connectIn(int port, Pipe inPipe);
 
 }
