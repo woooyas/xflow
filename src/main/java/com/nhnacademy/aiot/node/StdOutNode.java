@@ -1,5 +1,6 @@
 package com.nhnacademy.aiot.node;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -14,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class StdOutNode implements OutputNode{
-    Thread thread;
+    private Thread thread;
+    private BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
+
     
     private final Map<Integer, Pipe> inPipes;  // 값이 나오는 파이프
 
@@ -23,21 +26,31 @@ public class StdOutNode implements OutputNode{
      */
     public StdOutNode() {
         inPipes = new HashMap<>();
+        thread = new Thread(this);
     }
 
     /**
      * pipe 안의 message들을 꺼냅니다.
+     * @throws InterruptedException  pipe에서 message를 못 꺼냈을 경우 생기는 exception입니다.
+     * @throws IOException  sysOutMessage에서 던진 Exception입니다.
      */
-    public Message getMessage() {
+    public void getMessage() throws InterruptedException, IOException {
         for(Pipe pipe : inPipes.values()) {
-            try {
-                return pipe.get();
-            } catch (InterruptedException e) {
-                log.trace("message 꺼내기 실패");
-                thread.interrupt();
+            if(!pipe.isEmpty()) {
+                sysOutMessage(pipe.get());
             }
         }
-        return null;
+    }
+
+    /**
+     * pipe에서 꺼낸 message를 표준출력합니다.
+     * @param message pipe에서 꺼낸 message입니다.
+     * @throws IOException 표준출력할 data가 없을 경우 생기는 문제입니다.
+     */
+    public void sysOutMessage(Message message) throws IOException {
+        writer.write(message.getString("value"));
+        writer.newLine();
+        writer.flush();
     }
 
     @Override
@@ -55,25 +68,14 @@ public class StdOutNode implements OutputNode{
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
-            /* Message message = getMessage();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
-            writer.write(message.getString("value"));
-            writer.newLine();
-            writer.flush(); */
-
-            Message message = getMessage();
             try {
-                OutputStreamWriter outputStream = new OutputStreamWriter(System.out);
-                outputStream.write(message.getString("value"+"\n"));
-                outputStream.flush();
-            } catch (JSONException e) {
-                log.trace("JSONException" + e);
-                thread.interrupt();
+                getMessage();
+            } catch (InterruptedException e) {
+                log.error("InterruptedException", e);
             } catch (IOException e) {
-                log.error("IOException" + e);
-                thread.interrupt();
+                log.error("message System.out fail",e);
             }
-
+            
         }
     }
 
