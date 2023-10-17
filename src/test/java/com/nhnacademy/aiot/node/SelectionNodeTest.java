@@ -2,13 +2,15 @@ package com.nhnacademy.aiot.node;
 
 import java.util.function.Function;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.pipe.Pipe;
 
-@SuppressWarnings("squid:S2187")
-public class SelectionNodeTest {
-
-    public static void main(String[] args) throws InterruptedException {
+class SelectionNodeTest {
+    @Test
+    void SelectionNode테스트() throws InterruptedException {
         Pipe pipe1 = new Pipe();
         Pipe pipe2 = new Pipe();
         Pipe pipe3 = new Pipe();
@@ -38,8 +40,7 @@ public class SelectionNodeTest {
         pipe1.put(message2);
         pipe1.put(message3);
 
-        System.out.println(pipe2.get().getInt("value"));
-        System.out.println(pipe3.get().getInt("value"));
+        Assertions.assertEquals(-5, pipe2.get().getInt("value"));
+        Assertions.assertEquals(10, pipe3.get().getInt("value"));
     }
-
 }
