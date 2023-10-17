@@ -68,7 +68,7 @@ public class SelectionNode implements InputNode, OutputNode {
         try {
             Message message = inPipe.get();
             sendMessage(message, function.apply(message));
-            log.debug(SEND_MESSAGE, getUuid(), function.apply(message), message.get("value"));
+            log.debug(SEND_MESSAGE, getUuid(), function.apply(message), message);
         } catch (InterruptedException ignore) {
             Thread.currentThread().interrupt();
         }
