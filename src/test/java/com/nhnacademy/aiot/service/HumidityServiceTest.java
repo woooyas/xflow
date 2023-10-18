@@ -1,41 +1,46 @@
 package com.nhnacademy.aiot.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.pipe.Pipe;
 
 class HumidityServiceTest {
+
+    String string;
+
+    @AfterEach
+    void 초기화() {
+        string = "";
+    }
+
     @Test
     void 습도_받기_테스트() {
-        String regualr = "[{\"time\":\"" + "^[\\d]{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$" + "T"+ 
-                    "^(\\d{2}):(\\d{2}):(\\d{2}\\.\\d{3})$Z\",\"value\":"+ "^(\\d+(\\.\\d*)?|\\.\\d+)$" + ",\"24e124126c457594\":\"\"}]";
         try (ServerSocket serverSocket = new ServerSocket(1880)) {
             Pipe pipe = new Pipe();
             HumidityService humidityService = new HumidityService();
             humidityService.execute(pipe);
 
             Thread thread = new Thread(() -> {
-                try (Socket socket = new Socket("localhost", 1880)){
+                try (Socket socket = new Socket("localhost", 1880)) {
                     InputStream inputStream = socket.getInputStream();
 
-                    byte[] buffer = new byte[1_000];
+                    byte[] buffer = new byte[10_000];
                     int length = inputStream.read(buffer);
-                    
-                    String string = new String(buffer, 0, length);
-                    assertEquals(regualr, string);
-                    
+
+                    string = new String(buffer, 0, length);
 
                 } catch (IOException ignore) {
                 }
-                
+
             });
             thread.start();
 
@@ -45,6 +50,10 @@ class HumidityServiceTest {
             pipe.put(message);
 
             thread.join();
+            assertTrue(string.matches("HTTP/1\\.1 200 OK\r\n" //
+                    + "Content-Type: application/json; charset=utf-8\r\n" //
+                    + "Content-Length: .*" + "\r\n\r\n" +
+                    "\\{\"dateTime\":\".*\",\"humidity\":.*\\}"));
 
         } catch (IOException ignore) {
         } catch (InterruptedException e) {
