@@ -1,5 +1,8 @@
 package com.nhnacademy.aiot.service;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.nhnacademy.aiot.node.FunctionNode;
 import com.nhnacademy.aiot.node.HttpNode;
 import com.nhnacademy.aiot.node.ResponseNode;
@@ -16,13 +19,21 @@ public class HumidityService implements Service {
     public void execute(Pipe inPipe) {
         HttpNode httpNode = new HttpNode(HOSTNAME, PORT, PATH);
         FunctionNode functionNode = new FunctionNode(message -> {
+            JSONObject jsonObject = new JSONArray(message.getString(RESPONSE)).getJSONObject(0);
+            String dateTime = jsonObject.getString("time");
+            dateTime= dateTime.substring(0, 10) + " " + dateTime.substring(11, 19);
+            double humidity = jsonObject.getDouble("value");
+            System.out.println(dateTime);
+            JSONObject temp = new JSONObject();
+            temp.put("dateTime", dateTime);
+            temp.put("humidity", humidity);
             StringBuilder stringBuilder = new StringBuilder();
             int length = message.getString(RESPONSE).length();
             stringBuilder.append("HTTP/1.1 200 OK\r\n");
             stringBuilder.append("Content-Type: application/json; charset=utf-8\r\n");
             stringBuilder.append("Content-Length: " + length + "\r\n");
             stringBuilder.append("\r\n");
-            stringBuilder.append(message.getString(RESPONSE));
+            stringBuilder.append(temp.toString());
             message.put(RESPONSE, stringBuilder.toString());
             return message;
         });
@@ -35,7 +46,7 @@ public class HumidityService implements Service {
         functionNode.connectIn(0, pipe);
         functionNode.connectOut(0, pipe2);
         responseNode.connectIn(0, pipe2);
-        
+
         httpNode.start();
         functionNode.start();
         responseNode.start();
