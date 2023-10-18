@@ -10,7 +10,7 @@ public class HumidityService implements Service {
     private static final int PORT = 1880;
     private static final String PATH = "/ep/humidity/24e124126c457594?count=1&st=1696772438&et="
             + (int) (System.currentTimeMillis() / 1000 - 30);
-    private static final String RESPONSE = "RESPONSE";
+    private static final String RESPONSE = "response";
 
     @Override
     public void execute(Pipe inPipe) {
