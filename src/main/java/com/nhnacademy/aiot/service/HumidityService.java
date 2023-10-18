@@ -10,19 +10,20 @@ public class HumidityService implements Service {
     private static final int PORT = 1880;
     private static final String PATH = "/ep/humidity/24e124126c457594?count=1&st=1696772438&et="
             + (int) (System.currentTimeMillis() / 1000 - 30);
+    private static final String RESPONSE = "RESPONSE";
 
     @Override
     public void execute(Pipe inPipe) {
         HttpNode httpNode = new HttpNode(HOSTNAME, PORT, PATH);
         FunctionNode functionNode = new FunctionNode(message -> {
             StringBuilder stringBuilder = new StringBuilder();
-            int length = message.length();
+            int length = message.getString(RESPONSE).length();
             stringBuilder.append("HTTP/1.1 200 OK\r\n");
             stringBuilder.append("Content-Type: text/html; charset=utf-8\r\n");
             stringBuilder.append("Content-Length: " + length + "\r\n");
             stringBuilder.append("\r\n");
-            stringBuilder.append(message.getString("response"));
-            message.put("response", stringBuilder.toString());
+            stringBuilder.append(message.getString(RESPONSE));
+            message.put(RESPONSE, stringBuilder.toString());
             return message;
         });
         ResponseNode responseNode = new ResponseNode();
