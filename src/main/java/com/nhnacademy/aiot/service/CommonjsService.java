@@ -14,7 +14,7 @@ public class CommonjsService implements Service {
             StringBuilder stringBuilder = new StringBuilder();
             int length = message.length();
             stringBuilder.append("HTTP/1.1 200 OK\r\n");
-            stringBuilder.append("Content-Type: text/html; charset=utf-8\r\n");
+            stringBuilder.append("Content-Type: application/javascript; charset=utf-8\r\n");
             stringBuilder.append("Content-Length: " + length + "\r\n");
             stringBuilder.append("\r\n");
             stringBuilder.append(message.getString("file"));
