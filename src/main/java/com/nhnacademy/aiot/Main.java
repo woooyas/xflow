@@ -5,6 +5,10 @@ import com.nhnacademy.aiot.node.RequestNode;
 import com.nhnacademy.aiot.node.SelectionNode;
 import com.nhnacademy.aiot.node.ServerNode;
 import com.nhnacademy.aiot.pipe.Pipe;
+import com.nhnacademy.aiot.service.CommonjsService;
+import com.nhnacademy.aiot.service.HumidityService;
+import com.nhnacademy.aiot.service.IndexService;
+import com.nhnacademy.aiot.service.TemperatureService;
 
 /**
  * 애플리케이션을 시작하는 클래스입니다.
@@ -31,7 +35,7 @@ public class Main {
             if (request.equals("GET /common.js HTTP/1.1")) {
                 return 1;
             }
-            if (request.equals("GET /temporature HTTP/1.1")) {
+            if (request.equals("GET /temperature HTTP/1.1")) {
                 return 2;
             }
             if (request.equals("GET /humidity HTTP/1.1")) {
@@ -61,6 +65,11 @@ public class Main {
         serverNode.start();
         requestNode.start();
         selectionNode.start();
+
+        new IndexService().execute(pipe3);
+        new CommonjsService().execute(pipe4);
+        new TemperatureService().execute(pipe5);
+        new HumidityService().execute(pipe6);
     }
 
 }

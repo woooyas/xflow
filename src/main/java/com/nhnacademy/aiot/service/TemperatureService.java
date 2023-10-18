@@ -1,5 +1,6 @@
 package com.nhnacademy.aiot.service;
 
+import java.net.Socket;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -8,7 +9,7 @@ import com.nhnacademy.aiot.node.HttpNode;
 import com.nhnacademy.aiot.node.ResponseNode;
 import com.nhnacademy.aiot.pipe.Pipe;
 
-public class TemperatureService implements Service{
+public class TemperatureService implements Service {
     private static final String HOSTNAME = "ems.nhnacademy.com";
     private static final int PORT = 1880;
     private static final String PATH = "/ep/temperature/24e124126c457594?count=1&st=1696772438&et="
@@ -21,14 +22,13 @@ public class TemperatureService implements Service{
         FunctionNode functionNode = new FunctionNode(message -> {
             JSONObject jsonObject = new JSONArray(message.getString(RESPONSE)).getJSONObject(0);
             String dateTime = jsonObject.getString("time");
-            dateTime= dateTime.substring(0, 10) + " " + dateTime.substring(11, 19);
-            double humidity = jsonObject.getDouble("value");
-            System.out.println(dateTime);
+            dateTime = dateTime.substring(0, 10) + " " + dateTime.substring(11, 19);
+            double temperature = jsonObject.getDouble("value");
             JSONObject temp = new JSONObject();
             temp.put("dateTime", dateTime);
-            temp.put("temperature", humidity);
+            temp.put("temperature", temperature);
             StringBuilder stringBuilder = new StringBuilder();
-            int length = message.getString(RESPONSE).length();
+            int length = temp.toString().length();
             stringBuilder.append("HTTP/1.1 200 OK\r\n");
             stringBuilder.append("Content-Type: application/json; charset=utf-8\r\n");
             stringBuilder.append("Content-Length: " + length + "\r\n");

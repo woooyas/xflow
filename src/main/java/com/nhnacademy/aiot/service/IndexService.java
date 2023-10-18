@@ -11,7 +11,7 @@ public class IndexService implements Service {
         FileInNode fileInNode = new FileInNode("index.html");
         FunctionNode functionNode = new FunctionNode(message -> {
             StringBuilder stringBuilder = new StringBuilder();
-            int length = message.length();
+            int length = message.getString("file").length();
             stringBuilder.append("HTTP/1.1 200 OK\r\n");
             stringBuilder.append("Content-Type: text/html; charset=utf-8\r\n");
             stringBuilder.append("Content-Length: " + length + "\r\n");
@@ -33,5 +33,5 @@ public class IndexService implements Service {
         functionNode.start();
         responseNode.start();
     }
-    
+
 }
