@@ -21,14 +21,13 @@ public class HumidityService implements Service {
         FunctionNode functionNode = new FunctionNode(message -> {
             JSONObject jsonObject = new JSONArray(message.getString(RESPONSE)).getJSONObject(0);
             String dateTime = jsonObject.getString("time");
-            dateTime= dateTime.substring(0, 10) + " " + dateTime.substring(11, 19);
+            dateTime = dateTime.substring(0, 10) + " " + dateTime.substring(11, 19);
             double humidity = jsonObject.getDouble("value");
-            System.out.println(dateTime);
             JSONObject temp = new JSONObject();
             temp.put("dateTime", dateTime);
             temp.put("humidity", humidity);
             StringBuilder stringBuilder = new StringBuilder();
-            int length = message.getString(RESPONSE).length();
+            int length = temp.toString().length();
             stringBuilder.append("HTTP/1.1 200 OK\r\n");
             stringBuilder.append("Content-Type: application/json; charset=utf-8\r\n");
             stringBuilder.append("Content-Length: " + length + "\r\n");

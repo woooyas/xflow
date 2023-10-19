@@ -12,7 +12,7 @@ public class CommonjsService implements Service {
         FileInNode fileInNode = new FileInNode("common.js");
         FunctionNode functionNode = new FunctionNode(message -> {
             StringBuilder stringBuilder = new StringBuilder();
-            int length = message.length();
+            int length = message.getString("file").length();
             stringBuilder.append("HTTP/1.1 200 OK\r\n");
             stringBuilder.append("Content-Type: application/javascript; charset=utf-8\r\n");
             stringBuilder.append("Content-Length: " + length + "\r\n");
@@ -34,5 +34,5 @@ public class CommonjsService implements Service {
         functionNode.start();
         responseNode.start();
     }
-    
+
 }

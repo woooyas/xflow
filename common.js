@@ -3,7 +3,7 @@ const emsapi = function () {
     const api = new Object();
     let testMode = false;
 
-    const SERVER_URL = "http://localhost:80";
+    const SERVER_URL = "http://www.xflow.duckdns.org";
     const JSON_FORMAT = "json";
 
     api.getTemperature = async function (startDt, endDt, unit) {
